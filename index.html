@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For My Queen</title>
+    <!-- Importing a "Royal/Cinematic" font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ROYAL THEME STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Cinzel', serif;
+            overflow: hidden;
+            width: 100vw; height: 100vh;
+            background: #000;
+        }
+
+        /* --- BACKGROUND LAYER SYSTEM --- */
+        .bg-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 1.5s ease-in-out;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        #bg-1 { background-image: url('scene1.jpg'); opacity: 1; } /* Start Visible */
+        #bg-2 { background-image: url('scene2.jpg'); }
+        #bg-3 { background-image: url('scene3.jpg'); } /* The Heart Reveal */
+
+        /* Dark overlay to make text readable on detailed paintings */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- UI CONTAINER --- */
+        .ui-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 {
+            color: #fceeb5; /* Gold/Cream */
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        /* --- ROYAL BUTTONS --- */
+        .btn-group {
+            display: flex;
+            gap: 25px;
+            margin-top: auto;
+            margin-bottom: 80px; /* Push buttons to bottom */
+        }
+
+        button {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 15px 35px;
+            border: 1px solid rgba(255, 215, 0, 0.5); /* Gold Border */
+            background: rgba(0, 0, 0, 0.6); /* Glass Black */
+            color: #ffd700; /* Gold Text */
+            border-radius: 4px; /* Sharp corners for medieval look */
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-yes {
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            border: 1px solid #ffd700;
+        }
+
+        .btn-no {
+            border: 1px solid #a0a0a0;
+            color: #a0a0a0;
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* --- SCREEN SPECIFIC --- */
+        #screen-intro {
+            display: flex;
+            width: 100%; height: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #screen-date {
+            display: none; /* Hidden */
+            width: 100%; height: 100%;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-bottom: 50px;
+        }
+
+        /* Music Button - Top Right, Subtle */
+        .music-toggle {
+            position: absolute;
+            top: 25px; right: 25px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 45px; height: 45px;
+            color: white;
+            padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem;
+        }
+
+        /* Message Area in the Sky */
+        .message-area {
+            margin-top: 150px;
+            height: 150px;
+            width: 90%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-msg {
+            font-family: 'Playfair Display', serif; /* More poetic font for text */
+            color: white;
+            font-size: 2rem;
+            font-style: italic;
+            text-shadow: 0 2px 5px black;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s, transform 1s;
+        }
+
+        .text-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            color: #ff6b81;
+            font-weight: bold;
+        }
+
+        /* Large Action Button */
+        .big-action-btn {
+            width: 80%;
+            margin: 0 auto;
+            border: 1px solid white;
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .kiss-btn {
+            display: none;
+            background: linear-gradient(45deg, #800020, #b3002d); /* Burgundy */
+            border: none;
+            color: white;
+            box-shadow: 0 0 20px #800020;
+        }
+
+        /* Final Overlay */
+        #final-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+        .final-text {
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 2;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- AUDIO -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- BACKGROUNDS -->
+    <div id="bg-1" class="bg-layer"></div>
+    <div id="bg-2" class="bg-layer"></div>
+    <div id="bg-3" class="bg-layer"></div>
+    
+    <div class="overlay"></div>
+
+    <!-- UI INTERFACE -->
+    <div class="ui-container">
+        
+        <!-- SCREEN 1: PROPOSAL -->
+        <div id="screen-intro">
+            <div style="flex-grow: 1;"></div> <!-- Spacer -->
+            <h1>Tkhrji m3aya<br>f date?</h1>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="startJourney()">Akid (Yes)</button>
+                <button class="btn-no" onclick="dodge(this)">La (No)</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: THE DATE -->
+        <div id="screen-date">
+            <button class="music-toggle" onclick="toggleMusic()">🎵</button>
+
+            <div class="message-area">
+                <div id="msg-display" class="text-msg"></div>
+            </div>
+
+            <button id="reveal-btn" class="big-action-btn" onclick="revealHeart()">
+                Brki bach t3rfi chno f 9lbi 
+            </button>
+
+            <button id="kiss-btn" class="kiss-btn" onclick="finish()">
+                Ari Bissa 💋
+            </button>
+        </div>
+
+    </div>
+
+    <!-- FINAL SCREEN -->
+    <div id="final-overlay">
+        <h1 style="font-size: 6rem; margin:0;">❤️</h1>
+        <div class="final-text">
+            Happy Valentine's Day<br>
+            <span style="color:#ffd700; font-size:2rem;">Sanae</span>
+        </div>
+    </div>
+
+    <script>
+        /* --- LOGIC --- */
+
+        // 1. Start the Date
+        function startJourney() {
+            // Fade out intro UI
+            document.getElementById('screen-intro').style.display = 'none';
+            
+            // Switch Background to Scene 2 (Sitting)
+            document.getElementById('bg-1').style.opacity = '0';
+            document.getElementById('bg-2').style.opacity = '1';
+
+            // Show Date UI
+            const dateScreen = document.getElementById('screen-date');
+            dateScreen.style.display = 'flex';
+            
+            // Animation for UI entry
+            dateScreen.style.opacity = '0';
+            setTimeout(() => { dateScreen.style.opacity = '1'; }, 100);
+        }
+
+        // 2. The "No" Button Game
+        function dodge(btn) {
+            const x = (Math.random() - 0.5) * 150;
+            const y = (Math.random() - 0.5) * 150;
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+            
+            // Make Yes Button stronger
+            const yesBtn = document.querySelector('.btn-yes');
+            yesBtn.style.transform = 'scale(1.1)';
+            yesBtn.style.boxShadow = '0 0 25px rgba(255, 215, 0, 0.6)';
+        }
+
+        // 3. Music Toggle
+        const audio = document.getElementById('bg-music');
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                document.querySelector('.music-toggle').innerHTML = "⏸";
+            } else {
+                audio.pause();
+                document.querySelector('.music-toggle').innerHTML = "🎵";
+            }
+        }
+
+        // 4. Reveal Heart (Background Switch) & Messages
+        const messages = [
+            "Kanbghik...",
+            "Kan7ma9 3lik...",
+            "<span class='highlight'>Sanae</span> l3alamiya...",
+            "Nti lktkota dyali 🐣",
+            "O 3mri kaml n3tih lik",
+            "O ari chi bissa..."
+        ];
+        let msgIndex = 0;
+
+        function revealHeart() {
+            // HIDE the reveal button
+            document.getElementById('reveal-btn').style.display = 'none';
+
+            // SWITCH BACKGROUND to Scene 3 (Holding Heart)
+            document.getElementById('bg-2').style.opacity = '0';
+            document.getElementById('bg-3').style.opacity = '1';
+
+            // Start playing messages
+            setTimeout(playNextMessage, 1000);
+        }
+
+        function playNextMessage() {
+            const display = document.getElementById('msg-display');
+
+            if (msgIndex < messages.length) {
+                // Show text
+                display.innerHTML = messages[msgIndex];
+                display.classList.add('text-visible');
+
+                // Check if last message
+                if (msgIndex === messages.length - 1) {
+                    setTimeout(() => {
+                        document.getElementById('kiss-btn').style.display = 'block';
+                    }, 1500);
+                } else {
+                    // Wait, fade out, next
+                    setTimeout(() => {
+                        display.classList.remove('text-visible');
+                        setTimeout(() => {
+                            msgIndex++;
+                            playNextMessage();
+                        }, 1000); // Time between messages
+                    }, 3000); // Reading time
+                }
+            }
+        }
+
+        // 5. Final
+        function finish() {
+            const overlay = document.getElementById('final-overlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => { overlay.style.opacity = '1'; }, 100);
+        }
+
+    </script>
+</body>
+</html>
